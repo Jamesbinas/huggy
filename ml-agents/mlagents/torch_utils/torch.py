@@ -53,6 +53,8 @@ def set_torch_config(torch_settings: TorchSettings) -> None:
 
     if _device.type == "cuda":
         torch.set_default_tensor_type(torch.cuda.FloatTensor)
+    elif _device.type == 'mps':
+        torch.set_default_device(device_str)
     else:
         torch.set_default_tensor_type(torch.FloatTensor)
     logger.debug(f"default Torch device: {_device}")
