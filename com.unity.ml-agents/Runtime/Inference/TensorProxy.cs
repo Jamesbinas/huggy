@@ -25,17 +25,17 @@ namespace Unity.MLAgents.Inference
 
         static readonly Dictionary<TensorType, Type> k_TypeMap =
             new Dictionary<TensorType, Type>()
-        {
-            { TensorType.FloatingPoint, typeof(float) },
-            { TensorType.Integer, typeof(int) }
-        };
+            {
+                { TensorType.FloatingPoint, typeof(float) },
+                { TensorType.Integer, typeof(int) }
+            };
 
         static readonly Dictionary<TensorType, DataType> k_DTypeMap =
             new Dictionary<TensorType, DataType>()
-        {
-            { TensorType.FloatingPoint, Sentis.DataType.Float },
-            { TensorType.Integer, Sentis.DataType.Int }
-        };
+            {
+                { TensorType.FloatingPoint, Sentis.DataType.Float },
+                { TensorType.Integer, Sentis.DataType.Int }
+            };
 
         public string name;
         public TensorType valueType;
@@ -45,7 +45,7 @@ namespace Unity.MLAgents.Inference
         public DataType DType => k_DTypeMap[valueType];
         public long[] shape;
         public Tensor data;
-        public DeviceType Device => data.tensorOnDevice.deviceType;
+        public BackendType Device => data.dataOnBackend.backendType;
 
         public long Height
         {
@@ -69,13 +69,21 @@ namespace Unity.MLAgents.Inference
 
         ~TensorProxy()
         {
-            data?.Dispose();
+            Dispose();
+        }
+
+        void Dispose()
+        {
+            if (data.dataOnBackend.backendType != BackendType.CPU)
+            {
+                data?.Dispose();
+            }
         }
     }
 
     internal static class TensorUtils
     {
-        public static void ResizeTensor(TensorProxy tensor, int batch, ITensorAllocator allocator)
+        public static void ResizeTensor(TensorProxy tensor, int batch)
         {
             if (tensor.shape[0] == batch &&
                 tensor.data != null && tensor.data.Batch() == batch)
@@ -95,10 +103,10 @@ namespace Unity.MLAgents.Inference
             switch (dataType)
             {
                 case DataType.Float:
-                    tensor = TensorFloat.Zeros(shape);
+                    tensor = TensorFloat.AllocZeros(shape);
                     break;
                 case DataType.Int:
-                    tensor = TensorInt.Zeros(shape);
+                    tensor = TensorInt.AllocZeros(shape);
                     break;
             }
 
@@ -146,6 +154,12 @@ namespace Unity.MLAgents.Inference
             var height = tensorProxy.data.Height();
             var width = tensorProxy.data.Width();
             var channels = tensorProxy.data.Channels();
+
+            if (tensorProxy.data.dataOnBackend.backendType != BackendType.CPU)
+            {
+                tensorProxy.data.CompleteOperationsAndDownload();
+            }
+
             for (var h = 0; h < height; h++)
             {
                 for (var w = 0; w < width; w++)
@@ -180,6 +194,11 @@ namespace Unity.MLAgents.Inference
             if (tensorProxy.data == null)
             {
                 throw new ArgumentNullException();
+            }
+
+            if (tensorProxy.data.dataOnBackend.backendType != BackendType.CPU)
+            {
+                tensorProxy.data.CompleteOperationsAndDownload();
             }
 
             for (var i = 0; i < tensorProxy.data.Length(); i++)

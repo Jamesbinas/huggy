@@ -24,7 +24,14 @@ namespace Unity.MLAgents.Inference
         public void Apply(TensorProxy tensorProxy, IList<int> actionIds, Dictionary<int, ActionBuffers> lastActions)
         {
             var actionSize = tensorProxy.shape[tensorProxy.shape.Length - 1];
+
+            if (tensorProxy.data.dataOnBackend.backendType != BackendType.CPU)
+            {
+                tensorProxy.data.CompleteOperationsAndDownload();
+            }
+
             var agentIndex = 0;
+
             for (var i = 0; i < actionIds.Count; i++)
             {
                 var agentId = actionIds[i];
@@ -38,10 +45,6 @@ namespace Unity.MLAgents.Inference
                     }
 
                     var continuousBuffer = actionBuffer.ContinuousActions;
-                    if (tensorProxy.Device == DeviceType.GPU)
-                    {
-                        tensorProxy.data.MakeReadable();
-                    }
 
                     for (var j = 0; j < actionSize; j++)
                     {
@@ -61,7 +64,7 @@ namespace Unity.MLAgents.Inference
     {
         readonly ActionSpec m_ActionSpec;
 
-        public DiscreteActionOutputApplier(ActionSpec actionSpec, int seed, ITensorAllocator allocator)
+        public DiscreteActionOutputApplier(ActionSpec actionSpec, int seed)
         {
             m_ActionSpec = actionSpec;
         }
@@ -69,7 +72,14 @@ namespace Unity.MLAgents.Inference
         public void Apply(TensorProxy tensorProxy, IList<int> actionIds, Dictionary<int, ActionBuffers> lastActions)
         {
             var agentIndex = 0;
+
+            if (tensorProxy.data.dataOnBackend.backendType != BackendType.CPU)
+            {
+                tensorProxy.data.CompleteOperationsAndDownload();
+            }
+
             var actionSize = tensorProxy.shape[tensorProxy.shape.Length - 1];
+
             for (var i = 0; i < actionIds.Count; i++)
             {
                 var agentId = actionIds[i];
@@ -83,11 +93,6 @@ namespace Unity.MLAgents.Inference
                     }
 
                     var discreteBuffer = actionBuffer.DiscreteActions;
-
-                    if (tensorProxy.Device == DeviceType.GPU)
-                    {
-                        tensorProxy.data.MakeReadable();
-                    }
 
                     for (var j = 0; j < actionSize; j++)
                     {
@@ -112,7 +117,7 @@ namespace Unity.MLAgents.Inference
         readonly int[] m_StartActionIndices;
         readonly float[] m_CdfBuffer;
 
-        public LegacyDiscreteActionOutputApplier(ActionSpec actionSpec, int seed, ITensorAllocator allocator)
+        public LegacyDiscreteActionOutputApplier(ActionSpec actionSpec, int seed)
         {
             m_ActionSize = actionSpec.BranchSizes;
             m_Multinomial = new Multinomial(seed);
@@ -165,9 +170,10 @@ namespace Unity.MLAgents.Inference
         {
             // Find the class maximum
             var maxProb = float.NegativeInfinity;
-            if (logProbs.Device == DeviceType.GPU)
+
+            if (logProbs.data.backendType != BackendType.CPU)
             {
-                logProbs.data.MakeReadable();
+                logProbs.data.CompleteOperationsAndDownload();
             }
 
             for (var cls = 0; cls < branchSize; ++cls)
@@ -177,10 +183,6 @@ namespace Unity.MLAgents.Inference
 
             // Sum the log probabilities and compute CDF
             var sumProb = 0.0f;
-            if (logProbs.Device == DeviceType.GPU)
-            {
-                logProbs.data.MakeReadable();
-            }
 
             for (var cls = 0; cls < branchSize; ++cls)
             {
@@ -207,7 +209,14 @@ namespace Unity.MLAgents.Inference
         public void Apply(TensorProxy tensorProxy, IList<int> actionIds, Dictionary<int, ActionBuffers> lastActions)
         {
             var agentIndex = 0;
+
+            if (tensorProxy.data.dataOnBackend.backendType != BackendType.CPU)
+            {
+                tensorProxy.data.CompleteOperationsAndDownload();
+            }
+
             var memorySize = tensorProxy.data.Width();
+
             for (var i = 0; i < actionIds.Count; i++)
             {
                 var agentId = actionIds[i];
@@ -217,11 +226,6 @@ namespace Unity.MLAgents.Inference
                 {
                     memory = new List<float>();
                     memory.AddRange(Enumerable.Repeat(0f, memorySize));
-                }
-
-                if (tensorProxy.Device == DeviceType.GPU)
-                {
-                    tensorProxy.data.MakeReadable();
                 }
 
                 for (var j = 0; j < memorySize; j++)

@@ -14,11 +14,9 @@ namespace Unity.MLAgents.Tests
         public void Construction()
         {
             var actionSpec = new ActionSpec();
-            var alloc = new TensorCachingAllocator();
             var mem = new Dictionary<int, List<float>>();
-            var tensorGenerator = new TensorApplier(actionSpec, 0, alloc, mem);
+            var tensorGenerator = new TensorApplier(actionSpec, 0, mem);
             Assert.IsNotNull(tensorGenerator);
-            alloc.Dispose();
         }
 
         [Test]
@@ -61,8 +59,7 @@ namespace Unity.MLAgents.Tests
                     new TensorShape(2, 5),
                     new[] { 0.5f, 22.5f, 0.1f, 5f, 1f, 4f, 5f, 6f, 7f, 8f })
             };
-            var alloc = new TensorCachingAllocator();
-            var applier = new LegacyDiscreteActionOutputApplier(actionSpec, 0, alloc);
+            var applier = new LegacyDiscreteActionOutputApplier(actionSpec, 0);
 
             var agentIds = new List<int>() { 0, 1 };
 
@@ -77,7 +74,6 @@ namespace Unity.MLAgents.Tests
 
             Assert.AreEqual(actionDict[1].DiscreteActions[0], 1);
             Assert.AreEqual(actionDict[1].DiscreteActions[1], 2);
-            alloc.Dispose();
         }
 
         [Test]
@@ -92,8 +88,7 @@ namespace Unity.MLAgents.Tests
                     new[] { 1, 1, 1, 2 }),
                 valueType = TensorProxy.TensorType.Integer
             };
-            var alloc = new TensorCachingAllocator();
-            var applier = new DiscreteActionOutputApplier(actionSpec, 0, alloc);
+            var applier = new DiscreteActionOutputApplier(actionSpec, 0);
 
             var agentIds = new List<int>() { 0, 1 };
 
@@ -108,7 +103,6 @@ namespace Unity.MLAgents.Tests
 
             Assert.AreEqual(actionDict[1].DiscreteActions[0], 1);
             Assert.AreEqual(actionDict[1].DiscreteActions[1], 2);
-            alloc.Dispose();
         }
 
         [Test]
@@ -128,8 +122,7 @@ namespace Unity.MLAgents.Tests
                     new[] { 0.5f, 22.5f, 0.1f, 5f, 1f, 4f, 5f, 6f, 7f, 8f })
             };
             var continuousApplier = new ContinuousActionOutputApplier(actionSpec);
-            var alloc = new TensorCachingAllocator();
-            var discreteApplier = new LegacyDiscreteActionOutputApplier(actionSpec, 0, alloc);
+            var discreteApplier = new LegacyDiscreteActionOutputApplier(actionSpec, 0);
 
             var agentIds = new List<int>() { 0, 1 };
 
@@ -151,7 +144,6 @@ namespace Unity.MLAgents.Tests
             Assert.AreEqual(actionDict[1].ContinuousActions[2], 6);
             Assert.AreEqual(actionDict[1].DiscreteActions[0], 1);
             Assert.AreEqual(actionDict[1].DiscreteActions[1], 2);
-            alloc.Dispose();
         }
 
         [Test]
@@ -173,8 +165,7 @@ namespace Unity.MLAgents.Tests
                 valueType = TensorProxy.TensorType.Integer
             };
             var continuousApplier = new ContinuousActionOutputApplier(actionSpec);
-            var alloc = new TensorCachingAllocator();
-            var discreteApplier = new DiscreteActionOutputApplier(actionSpec, 0, alloc);
+            var discreteApplier = new DiscreteActionOutputApplier(actionSpec, 0);
 
             var agentIds = new List<int>() { 0, 1 };
 
@@ -196,7 +187,6 @@ namespace Unity.MLAgents.Tests
             Assert.AreEqual(actionDict[1].ContinuousActions[2], 6);
             Assert.AreEqual(actionDict[1].DiscreteActions[0], 1);
             Assert.AreEqual(actionDict[1].DiscreteActions[1], 2);
-            alloc.Dispose();
         }
     }
 }

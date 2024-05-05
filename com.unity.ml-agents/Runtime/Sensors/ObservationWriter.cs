@@ -89,9 +89,9 @@ namespace Unity.MLAgents.Sensors
                 }
                 else
                 {
-                    if (m_Proxy.Device == DeviceType.GPU)
+                    if (m_Proxy.data.backendType != BackendType.CPU)
                     {
-                        m_Proxy.data.MakeReadable();
+                        m_Proxy.data.CompleteOperationsAndDownload();
                     }
 
                     ((TensorFloat)m_Proxy.data)[m_Batch, index + m_Offset] = value;
@@ -109,9 +109,9 @@ namespace Unity.MLAgents.Sensors
                 }
                 else
                 {
-                    if (m_Proxy.Device == DeviceType.GPU)
+                    if (m_Proxy.data.backendType != BackendType.CPU)
                     {
-                        m_Proxy.data.MakeReadable();
+                        m_Proxy.data.CompleteOperationsAndDownload();
                     }
 
                     ((TensorFloat)m_Proxy.data)[m_Batch, ch, w] = value;
@@ -151,9 +151,9 @@ namespace Unity.MLAgents.Sensors
                 }
                 else
                 {
-                    if (m_Proxy.Device == DeviceType.GPU)
+                    if (m_Proxy.data.backendType != BackendType.CPU)
                     {
-                        m_Proxy.data.MakeReadable();
+                        m_Proxy.data.CompleteOperationsAndDownload();
                     }
 
                     ((TensorFloat)m_Proxy.data)[m_Batch, ch + m_Offset, h, w] = value;
@@ -178,9 +178,9 @@ namespace Unity.MLAgents.Sensors
             }
             else
             {
-                if (m_Proxy.Device == DeviceType.GPU)
+                if (m_Proxy.data.backendType != BackendType.CPU)
                 {
-                    m_Proxy.data.MakeReadable();
+                    m_Proxy.data.CompleteOperationsAndDownload();
                 }
 
                 for (var index = 0; index < data.Count; index++)
@@ -206,9 +206,9 @@ namespace Unity.MLAgents.Sensors
             }
             else
             {
-                if (m_Proxy.Device == DeviceType.GPU)
+                if (m_Proxy.data.backendType != BackendType.CPU)
                 {
-                    m_Proxy.data.MakeReadable();
+                    m_Proxy.data.CompleteOperationsAndDownload();
                 }
 
                 ((TensorFloat)m_Proxy.data)[m_Batch, m_Offset + writeOffset + 0] = vec.x;
@@ -233,9 +233,9 @@ namespace Unity.MLAgents.Sensors
             }
             else
             {
-                if (m_Proxy.Device == DeviceType.GPU)
+                if (m_Proxy.data.backendType != BackendType.CPU)
                 {
-                    m_Proxy.data.MakeReadable();
+                    m_Proxy.data.CompleteOperationsAndDownload();
                 }
 
                 ((TensorFloat)m_Proxy.data)[m_Batch, m_Offset + writeOffset + 0] = vec.x;
@@ -261,9 +261,9 @@ namespace Unity.MLAgents.Sensors
             }
             else
             {
-                if (m_Proxy.Device == DeviceType.GPU)
+                if (m_Proxy.data.backendType != BackendType.CPU)
                 {
-                    m_Proxy.data.MakeReadable();
+                    m_Proxy.data.CompleteOperationsAndDownload();
                 }
 
                 ((TensorFloat)m_Proxy.data)[m_Batch, m_Offset + writeOffset + 0] = quat.x;

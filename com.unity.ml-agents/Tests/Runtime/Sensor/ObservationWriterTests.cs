@@ -44,7 +44,7 @@ namespace Unity.MLAgents.Tests
             var t = new TensorProxy
             {
                 valueType = TensorProxy.TensorType.FloatingPoint,
-                data = TensorFloat.Zeros(new TensorShape(2, 3))
+                data = TensorFloat.AllocZeros(new TensorShape(2, 3))
             };
 
             writer.SetTarget(t, 0, 0);
@@ -64,7 +64,7 @@ namespace Unity.MLAgents.Tests
             t = new TensorProxy
             {
                 valueType = TensorProxy.TensorType.FloatingPoint,
-                data = TensorFloat.Zeros(new TensorShape(2, 3))
+                data = TensorFloat.AllocZeros(new TensorShape(2, 3))
             };
 
             writer.SetTarget(t, 1, 1);
@@ -84,7 +84,7 @@ namespace Unity.MLAgents.Tests
             var t = new TensorProxy
             {
                 valueType = TensorProxy.TensorType.FloatingPoint,
-                data = TensorFloat.Zeros(new TensorShape(2, 3, 2, 2))
+                data = TensorFloat.AllocZeros(new TensorShape(2, 3, 2, 2))
             };
 
             writer.SetTarget(t, 0, 0);

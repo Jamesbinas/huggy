@@ -12,7 +12,6 @@ namespace Unity.MLAgents.Tests
         [TestCase(8, TestName = "TestResizeTensor_8D")]
         public void TestResizeTensor(int dimension)
         {
-            var alloc = new TensorCachingAllocator();
             var height = 64;
             var width = 84;
             var channels = 3;
@@ -37,7 +36,7 @@ namespace Unity.MLAgents.Tests
             var tensorProxy = new TensorProxy
             {
                 valueType = TensorProxy.TensorType.Integer,
-                data = TensorFloat.Zeros(new TensorShape(intShape)),
+                data = TensorFloat.AllocZeros(new TensorShape(intShape)),
                 shape = shape,
             };
 
@@ -47,7 +46,7 @@ namespace Unity.MLAgents.Tests
             Assert.AreEqual(channels, tensorProxy.data.shape.Channels());
 
             // TODO this resize is changing the tensor dimensions.need fix.
-            TensorUtils.ResizeTensor(tensorProxy, 42, alloc);
+            TensorUtils.ResizeTensor(tensorProxy, 42);
 
             Assert.AreEqual(height, tensorProxy.shape[dimension - 2]);
             Assert.AreEqual(width, tensorProxy.shape[dimension - 1]);
@@ -56,8 +55,6 @@ namespace Unity.MLAgents.Tests
             Assert.AreEqual(height, tensorProxy.data.shape.Height());
             Assert.AreEqual(width, tensorProxy.data.shape.Width());
             Assert.AreEqual(channels, tensorProxy.data.shape.Channels());
-
-            alloc.Dispose();
         }
 
         [Test]
@@ -93,7 +90,7 @@ namespace Unity.MLAgents.Tests
             var t = new TensorProxy
             {
                 valueType = TensorProxy.TensorType.FloatingPoint,
-                data = TensorFloat.Zeros(new TensorShape(1, 3, 4, 2))
+                data = TensorFloat.AllocZeros(new TensorShape(1, 3, 4, 2))
             };
 
             TensorUtils.FillTensorWithRandomNormal(t, rn);

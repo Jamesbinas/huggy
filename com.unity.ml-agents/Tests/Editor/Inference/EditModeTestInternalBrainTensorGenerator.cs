@@ -66,37 +66,31 @@ namespace Unity.MLAgents.Tests
         [Test]
         public void Construction()
         {
-            var alloc = new TensorCachingAllocator();
             var mem = new Dictionary<int, List<float>>();
-            var tensorGenerator = new TensorGenerator(0, alloc, mem);
+            var tensorGenerator = new TensorGenerator(0, mem);
             Assert.IsNotNull(tensorGenerator);
-            alloc.Dispose();
         }
 
         [Test]
         public void GenerateBatchSize()
         {
             var inputTensor = new TensorProxy();
-            var alloc = new TensorCachingAllocator();
             const int batchSize = 4;
-            var generator = new BatchSizeGenerator(alloc);
+            var generator = new BatchSizeGenerator();
             generator.Generate(inputTensor, batchSize, null);
             Assert.IsNotNull(inputTensor.data);
             Assert.AreEqual(((TensorInt)inputTensor.data)[0], batchSize);
-            alloc.Dispose();
         }
 
         [Test]
         public void GenerateSequenceLength()
         {
             var inputTensor = new TensorProxy();
-            var alloc = new TensorCachingAllocator();
             const int batchSize = 4;
-            var generator = new SequenceLengthGenerator(alloc);
+            var generator = new SequenceLengthGenerator();
             generator.Generate(inputTensor, batchSize, null);
             Assert.IsNotNull(inputTensor.data);
             Assert.AreEqual(((TensorInt)inputTensor.data)[0], 1);
-            alloc.Dispose();
         }
 
         [Test]
@@ -109,8 +103,7 @@ namespace Unity.MLAgents.Tests
             };
             const int batchSize = 4;
             var agentInfos = GetFakeAgents(ObservableAttributeOptions.ExamineAll);
-            var alloc = new TensorCachingAllocator();
-            var generator = new ObservationGenerator(alloc);
+            var generator = new ObservationGenerator();
             generator.AddSensorIndex(0); // ObservableAttribute (size 1)
             generator.AddSensorIndex(1); // TestSensor (size 0)
             generator.AddSensorIndex(2); // TestSensor (size 0)
@@ -128,7 +121,6 @@ namespace Unity.MLAgents.Tests
             Assert.AreEqual((int)((TensorFloat)inputTensor.data)[0, 3], 3);
             Assert.AreEqual((int)((TensorFloat)inputTensor.data)[1, 1], 4);
             Assert.AreEqual((int)((TensorFloat)inputTensor.data)[1, 3], 6);
-            alloc.Dispose();
         }
 
         [Test]
@@ -141,8 +133,7 @@ namespace Unity.MLAgents.Tests
             };
             const int batchSize = 4;
             var agentInfos = GetFakeAgents();
-            var alloc = new TensorCachingAllocator();
-            var generator = new PreviousActionInputGenerator(alloc);
+            var generator = new PreviousActionInputGenerator();
             var agent0 = agentInfos[0];
             var agent1 = agentInfos[1];
             var inputs = new List<AgentInfoSensorsPair>
@@ -156,7 +147,6 @@ namespace Unity.MLAgents.Tests
             Assert.AreEqual(((TensorInt)inputTensor.data)[0, 1], 2);
             Assert.AreEqual(((TensorInt)inputTensor.data)[1, 0], 3);
             Assert.AreEqual(((TensorInt)inputTensor.data)[1, 1], 4);
-            alloc.Dispose();
         }
 
         [Test]
@@ -169,8 +159,7 @@ namespace Unity.MLAgents.Tests
             };
             const int batchSize = 4;
             var agentInfos = GetFakeAgents();
-            var alloc = new TensorCachingAllocator();
-            var generator = new ActionMaskInputGenerator(alloc);
+            var generator = new ActionMaskInputGenerator();
 
             var agent0 = agentInfos[0];
             var agent1 = agentInfos[1];
@@ -186,7 +175,6 @@ namespace Unity.MLAgents.Tests
             Assert.AreEqual((int)((TensorFloat)inputTensor.data)[0, 4], 1);
             Assert.AreEqual((int)((TensorFloat)inputTensor.data)[1, 0], 0);
             Assert.AreEqual((int)((TensorFloat)inputTensor.data)[1, 4], 1);
-            alloc.Dispose();
         }
     }
 }

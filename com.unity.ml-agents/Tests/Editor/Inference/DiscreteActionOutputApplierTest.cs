@@ -13,7 +13,7 @@ namespace Unity.MLAgents.Tests
         {
             var actionSpec = ActionSpec.MakeDiscrete(3, 2);
 
-            var applier = new DiscreteActionOutputApplier(actionSpec, 2020, null);
+            var applier = new DiscreteActionOutputApplier(actionSpec, 2020);
             var agentIds = new List<int> { 42, 1337 };
             var actionBuffers = new Dictionary<int, ActionBuffers>();
             actionBuffers[42] = new ActionBuffers(actionSpec);
@@ -66,7 +66,7 @@ namespace Unity.MLAgents.Tests
                 valueType = TensorProxy.TensorType.FloatingPoint
             };
 
-            var applier = new LegacyDiscreteActionOutputApplier(actionSpec, 2020, null);
+            var applier = new LegacyDiscreteActionOutputApplier(actionSpec, 2020);
             var agentIds = new List<int> { 42, 1337 };
             var actionBuffers = new Dictionary<int, ActionBuffers>();
             actionBuffers[42] = new ActionBuffers(actionSpec);
